@@ -42,47 +42,35 @@ A full-featured business management system designed for small businesses, combin
 
 1. Clone the repository:
 
-```bash
+
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
 Create a virtual environment and activate it:
 
-bash
-Copy
-Edit
+
 python -m venv env
 source env/bin/activate  # On Windows: env\Scripts\activate
 Install dependencies:
 
-bash
-Copy
-Edit
+
 pip install -r requirements.txt
 Create a .env file:
 
 env
-Copy
-Edit
 DEBUG=True
 SECRET_KEY=your-secret-key
 ALLOWED_HOSTS=127.0.0.1,localhost
 Run migrations:
 
-bash
-Copy
-Edit
+
 python manage.py migrate
 Create a superuser:
 
-bash
-Copy
-Edit
+
 python manage.py createsuperuser
 Start the development server:
 
-bash
-Copy
-Edit
+
 python manage.py runserver
 Deployment to Production
 Environment Preparation
@@ -92,9 +80,7 @@ Use a PostgreSQL database (recommended for production).
 
 Collect static files:
 
-bash
-Copy
-Edit
+
 python manage.py collectstatic
 Deploy to Platforms
 Heroku / Railway / Render / PythonAnywhere:
