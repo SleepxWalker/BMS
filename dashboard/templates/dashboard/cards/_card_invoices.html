@@ -1,0 +1,7 @@
+<a href="{% url 'invoice_list' %}" class="card text-decoration-none text-dark shadow-sm h-100">
+  <div class="card-body text-center">
+    <i class="bi bi-receipt" style="font-size: 2rem;"></i>
+    <h5 class="mt-2">Invoices</h5>
+    <p class="mb-0">${{ invoice_total|floatformat:2 }}</p>
+  </div>
+</a>

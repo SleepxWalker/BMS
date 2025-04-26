@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Sales List{% endblock %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-cash-coin"></i> Sales</h2>
+    <a href="{% url 'create_sale' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> New Sale
+    </a>
+  </div>
+
+  {% if sales %}
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>TimeStamp</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sale in sales %}
+            <tr>
+              <td>{{ sale.id }}</td>
+              <td>{{ sale.client.business_name|default:sale.manual_client_name }}</td>
+              <td>{{ sale.sale_date|date:"d/m/Y H:i" }}</td>
+              <td>
+                <ul class="list-unstyled mb-0 small">
+                  {% for item in sale.items.all %}
+                    <li>{{ item.quantity }} × {{ item.item.product_name|default:item.description }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td><strong>${{ sale.total_amount|floatformat:2 }}</strong></td>
+              <td>
+                <a href="{% url 'sale_detail' sale.pk %}" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye"></i> View
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info">No sales recorded yet.</div>
+  {% endif %}
+</div>
+
+{% endblock %}

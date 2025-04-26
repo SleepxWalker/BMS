@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+
+<style>
+  body { font-size: 0.92rem; }
+  .form-control, .form-select { font-size: 0.85rem; }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0"><i class="bi bi-box-seam"></i> Inventory</h2>
+  <a href="{% url 'inventory_create' %}" class="btn btn-sm btn-success">
+    <i class="bi bi-plus-circle"></i> New Item
+  </a>
+</div>
+
+<form method="get" class="row gx-2 gy-2 align-items-end mb-3 collapse d-lg-block" id="filterCollapse">
+  <div class="col-auto">
+    <label class="form-label mb-0">Search</label>
+    <input type="text" name="q" value="{{ query }}" class="form-control form-control-sm" placeholder="Product name or category">
+  </div>
+  <div class="col-auto d-flex gap-2">
+    <div>
+      <label class="form-label d-block">&nbsp;</label>
+      <button type="submit" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+    <div>
+      <label class="form-label d-block">&nbsp;</label>
+      <a href="{% url 'inventory_list' %}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-x-circle"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+{% if items %}
+  <div class="table-responsive">
+    <table class="table table-sm table-striped table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Quantity</th>
+          <th>Reorder Level</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          <tr>
+            <td>#{{ item.id }}</td>
+            <td>{{ item.product_name }}</td>
+            <td>{{ item.category }}</td>
+            <td>
+              {% if item.quantity <= item.reorder_level %}
+                <span class="text-danger fw-bold">{{ item.quantity }}</span>
+              {% else %}
+                {{ item.quantity }}
+              {% endif %}
+            </td>
+            <td>{{ item.reorder_level }}</td>
+            <td>${{ item.price }}</td>
+            <td>
+              <a href="{% url 'inventory_detail' item.pk %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-eye"></i> View
+              </a>
+
+              {% if request.user.role in 'admin manager' %}
+                <a href="{% url 'inventory_edit' item.pk %}" class="btn btn-sm btn-outline-warning">
+                  <i class="bi bi-pencil"></i> Edit
+                </a>
+                <a href="{% url 'inventory_delete' item.pk %}" class="btn btn-sm btn-outline-danger"
+                   onclick="return confirm('Are you sure you want to deactivate this item?');">
+                  <i class="bi bi-trash"></i> Delete
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">No items found.</div>
+{% endif %}
+{% endblock %}

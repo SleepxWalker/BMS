@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+{% block title %}New Client{% endblock %}
+{% block content %}
+
+<style>
+  .form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  .form-card {
+    border-radius: 1.25rem;
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.05);
+    border: none;
+  }
+  .form-card .card-header {
+    background: linear-gradient(to right, #0d6efd, #0dcaf0);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.3rem;
+    padding: 1rem 1.25rem;
+    border-bottom: none;
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+  }
+  .form-card .card-body {
+    padding: 2rem;
+  }
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #495057;
+  }
+  .form-control, .form-select {
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
+  .text-danger {
+    font-size: 0.875rem;
+  }
+  .btn-primary {
+    background-color: #0d6efd;
+    border: none;
+    font-weight: 500;
+  }
+  .btn-outline-secondary {
+    font-weight: 500;
+  }
+</style>
+
+<div class="form-wrapper">
+  <div class="card form-card">
+    <div class="card-header">
+      <i class="bi bi-person-plus"></i> Add New Client
+    </div>
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field|add_class:"form-control" }}
+            {% if field.errors %}
+              <div class="text-danger">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="d-flex justify-content-end mt-4">
+          <a href="{% url 'client_list' %}" class="btn btn-outline-secondary me-2">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

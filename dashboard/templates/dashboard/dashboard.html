@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<style>
+  .dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .dashboard-card {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .dashboard-card:hover {
+    transform: scale(1.03);
+    text-decoration: none;
+  }
+  .dashboard-card i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #0d6efd;
+  }
+  .card-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+</style>
+
+<div class="container-fluid mt-4">
+
+  <!-- Cards -->
+  <div class="dashboard-cards">
+    <a href="{% url 'client_list' %}" class="dashboard-card">
+      <i class="bi bi-people"></i>
+      <h6 class="mt-2">Clients</h6>
+      <h4>{{ client_count }}</h4>
+    </a>
+
+    <a href="{% url 'project_list' %}" class="dashboard-card">
+      <i class="bi bi-kanban"></i>
+      <h6 class="mt-2">Projects</h6>
+      <h4>{{ project_count }}</h4>
+    </a>
+
+    <a href="{% url 'task_list' %}" class="dashboard-card">
+      <i class="bi bi-check2-square"></i>
+      <h6 class="mt-2">Tasks</h6>
+      <h4>{{ task_count }}</h4>
+    </a>
+
+    <a href="{% url 'inventory_list' %}" class="dashboard-card">
+      <i class="bi bi-box-seam"></i>
+      <h6 class="mt-2">Inventory</h6>
+      <h4>{{ inventory_count }}</h4>
+    </a>
+
+    <a href="{% url 'sale_list' %}" class="dashboard-card">
+      <i class="bi bi-cash-coin"></i>
+      <h6 class="mt-2">Sales ($)</h6>
+      <h4>${{ sales_total|floatformat:2 }}</h4>
+    </a>
+
+    <a href="{% url 'expense_list' %}" class="dashboard-card">
+      <i class="bi bi-receipt"></i>
+      <h6 class="mt-2">Expenses ($)</h6>
+      <h4>${{ expenses_total|floatformat:2 }}</h4>
+    </a>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Financial Overview -->
+    <div class="col-lg-8 d-flex flex-column gap-4">
+      <div class="card shadow-sm flex-fill">
+        <div class="card-body">
+          <h5 class="card-section-title"><i class="bi bi-bar-chart-fill"></i> Financial Overview</h5>
+          {% if financial_summary %}
+            <div class="table-responsive">
+              <table class="table table-sm table-striped align-middle">
+                <thead class="table-dark small">
+                  <tr>
+                    <th>Month</th>
+                    <th>Sales + Invoices</th>
+                    <th>Expenses</th>
+                    <th>Net Profit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for entry in financial_summary %}
+                    <tr>
+                      <td>{{ entry.month|date:"F Y" }}</td>
+                      <td>${{ entry.total_sales|floatformat:2 }}</td>
+                      <td>${{ entry.total_expenses|floatformat:2 }}</td>
+                      <td>
+                        {% if entry.net_profit >= 0 %}
+                          <span class="badge bg-success">${{ entry.net_profit|floatformat:2 }} 🔼</span>
+                        {% else %}
+                          <span class="badge bg-danger">${{ entry.net_profit|floatformat:2 }} 🔽</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert alert-info">No financial data available yet.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4 d-flex flex-column gap-4">
+
+      <div class="card shadow-sm flex-fill">
+        <div class="card-header bg-primary text-white">
+          <i class="bi bi-calendar-event"></i> Upcoming Tasks
+        </div>
+        <div class="card-body small">
+          {% include 'dashboard/partials/_upcoming_tasks.html' %}
+        </div>
+      </div>
+
+      <div class="card shadow-sm flex-fill">
+        <div class="card-header bg-secondary text-white">
+          <i class="bi bi-clock-history"></i> Recent Activity
+        </div>
+        <div class="card-body small">
+          {% include 'dashboard/partials/_recent_activity.html' %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

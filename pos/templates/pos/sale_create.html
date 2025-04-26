@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}New Sale{% endblock %}
+{% block content %}
+
+<style>
+  .form-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 2rem 1rem;
+  }
+
+  .form-card {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .form-card .card-header {
+    background: linear-gradient(to right, #0d6efd, #6610f2);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+  }
+
+  .form-card .card-body {
+    padding: 2rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+  }
+
+  .form-control, .form-select {
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .btn-primary {
+    background-color: #0d6efd;
+    border: none;
+  }
+</style>
+
+<div class="form-container">
+  <div class="card form-card">
+    <div class="card-header">
+      <i class="bi bi-cash-stack"></i> Create New Sale
+    </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+
+        <h5 class="mb-3">Sale Details</h5>
+        {% for field in sale_form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <hr class="my-4">
+        <h5 class="mb-3">Sale Item</h5>
+        <p class="text-muted small">If you select an item from inventory, description and price will auto-fill and lock.</p>
+
+        <div class="mb-3">
+          <label class="form-label">Inventory Item</label>
+          <select name="item" class="form-select" id="itemSelect" onchange="handleInventorySelect(this)">
+            <option value="">-- Manual Entry --</option>
+            {% for product in item_form.fields.item.queryset %}
+              <option value="{{ product.id }}"
+                      data-description="{{ product.description }}"
+                      data-price="{{ product.price }}">
+                {{ product.product_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <input type="text" name="description" class="form-control" id="descField">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Quantity</label>
+          <input type="number" name="quantity" class="form-control" id="qtyField" min="1" onchange="updateTotalPrice()">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Price</label>
+          <input type="number" name="price_at_time" class="form-control" step="0.01" id="priceField" onchange="updateTotalPrice()">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Total</label>
+          <input type="text" class="form-control" id="totalPrice" readonly>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <a href="{% url 'sale_list' %}" class="btn btn-outline-secondary me-2">Cancel</a>
+          <button type="submit" class="btn btn-primary">Complete Sale</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function handleInventorySelect(select) {
+  const selected = select.options[select.selectedIndex];
+  const desc = selected.getAttribute('data-description') || '';
+  const price = selected.getAttribute('data-price') || '';
+
+  const descField = document.getElementById('descField');
+  const priceField = document.getElementById('priceField');
+
+  if (select.value) {
+    descField.value = desc;
+    priceField.value = price;
+    descField.readOnly = true;
+    priceField.readOnly = true;
+  } else {
+    descField.value = '';
+    priceField.value = '';
+    descField.readOnly = false;
+    priceField.readOnly = false;
+  }
+  updateTotalPrice();
+}
+
+function updateTotalPrice() {
+  const qty = parseFloat(document.getElementById('qtyField').value) || 0;
+  const price = parseFloat(document.getElementById('priceField').value) || 0;
+  document.getElementById('totalPrice').value = (qty * price).toFixed(2);
+}
+</script>
+
+{% endblock %}

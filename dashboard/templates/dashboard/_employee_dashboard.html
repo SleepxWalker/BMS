@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<style>
+  .dashboard-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .dashboard-card {
+    flex: 1 1 220px;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    padding: 1.5rem 1rem;
+  }
+
+  .dashboard-card:hover {
+    transform: scale(1.03);
+  }
+
+  .dashboard-card i {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #0d6efd;
+  }
+
+  .card-section-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .card-mini-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+</style>
+
+<div class="container-fluid mt-4">
+
+  <!-- אזור הכרטיסים העליון -->
+  <div class="dashboard-cards">
+    <div class="dashboard-card">
+      <i class="bi bi-kanban-fill"></i>
+      <div class="card-mini-title">My Projects</div>
+      <div class="h4">{{ project_count }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <i class="bi bi-check2-square"></i>
+      <div class="card-mini-title">My Tasks</div>
+      <div class="h4">{{ task_count }}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <i class="bi bi-box-seam"></i>
+      <div class="card-mini-title">Inventory Items</div>
+      <div class="h4">{{ inventory_count }}</div>
+    </div>
+  </div>
+
+  <!-- אזור משימות קרובות -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-section-title"><i class="bi bi-calendar-event"></i> Upcoming Tasks</h5>
+      <hr>
+      {% if upcoming_tasks %}
+        <ul class="list-group list-group-flush small">
+          {% for task in upcoming_tasks %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <i class="bi bi-check2-square"></i> {{ task.task_name }}
+              </div>
+              <span class="badge bg-primary">{{ task.due_date|date:"d/m/Y" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="alert alert-info mt-3">No upcoming tasks.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- אזור פעילות אחרונה -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-section-title"><i class="bi bi-clock-history"></i> Recent Activity</h5>
+      <hr>
+      {% if recent_activity %}
+        <ul class="list-group list-group-flush small">
+          {% for entry in recent_activity %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <i class="bi bi-chevron-right"></i> {{ entry.description }}
+              </div>
+              <span class="text-muted small">{{ entry.created_at|date:"d/m/Y H:i" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="alert alert-info mt-3">No recent activity.</div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

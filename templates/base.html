@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Business Manager{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 3rem;
+      padding: 1rem 0;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand" href="{% url 'dashboard_home' %}">Business Manager</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="{% url 'dashboard_home' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'client_list' %}"><i class="bi bi-person-lines-fill"></i> Clients</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'project_list' %}"><i class="bi bi-kanban-fill"></i> Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'task_list' %}"><i class="bi bi-check2-square"></i> Tasks</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'sale_list' %}"><i class="bi bi-cash-coin"></i> POS - Sales</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'inventory_list' %}"><i class="bi bi-box-seam"></i> Inventory</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'invoice_list' %}"><i class="bi bi-receipt-cutoff"></i> Invoices</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'expense_list' %}"><i class="bi bi-receipt"></i> Expenses</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'user_list' %}"><i class="bi bi-people"></i> Users</a></li>
+        </ul>
+
+        {% if request.user.is_authenticated %}
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> {{ request.user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'user_detail' request.user.id %}"><i class="bi bi-person"></i> Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        {% else %}
+          <a class="nav-link text-light" href="{% url 'login' %}">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Messages -->
+  {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main Content -->
+  <main class="container py-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer bg-white border-top mt-auto">
+    <div class="container">
+      <p>© {{ year|default:"2025" }} Business Manager App. All rights reserved.</p>
+    </div>
+  </footer>
+
+<!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Auto-close alerts after 5 seconds -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function(alert) {
+        setTimeout(function() {
+          if (alert.classList.contains('show')) {
+            bootstrap.Alert.getOrCreateInstance(alert).close();
+          }
+        }, 5000);
+      });
+    });
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

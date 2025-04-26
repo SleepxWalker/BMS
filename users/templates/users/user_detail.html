@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}User Details{% endblock %}
+{% block content %}
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <h4 class="card-title"><i class="bi bi-person-badge"></i> User: {{ user_obj.username }}</h4>
+    <hr>
+
+    <p><strong>Full Name:</strong> {{ user_obj.first_name }} {{ user_obj.last_name }}</p>
+    <p><strong>Email:</strong> {{ user_obj.email }}</p>
+    <p><strong>Phone:</strong> {{ user_obj.phone }}</p>
+    <p><strong>Role:</strong> <span class="badge bg-secondary">{{ user_obj.role|title }}</span></p>
+    <p><strong>Status:</strong>
+      {% if user_obj.is_active %}
+        <span class="badge bg-success">Active</span>
+      {% else %}
+        <span class="badge bg-danger">Inactive</span>
+      {% endif %}
+    <p><a href="{% url 'change_password' %}" class="btn btn-warning">
+        <i class="bi bi-key-fill"></i> Change Password
+      </a>
+    </p>
+    </p>
+    {% if request.user.role in 'admin manager' %}
+    <a href="{% url 'user_list' %}" class="btn btn-outline-secondary mt-3">
+      <i class="bi bi-arrow-left"></i> Back to Users
+    </a>
+    {% else %}
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="dropdown-item text-danger">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+# Ignore Python files
+*.pyc
+__pycache__/
+
+# Ignore environment folder
+env/
+
+# Ignore database
+db.sqlite3
+
+# Ignore environment variables
+.env
+
+# Ignore Django staticfiles (collected)
+staticfiles/
